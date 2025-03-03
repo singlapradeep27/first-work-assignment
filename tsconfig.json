@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    // ...existing code...
+    "baseUrl": "",
+    "paths": {
+      "*": [
+        "*"
+      ],
+      "src/*": [
+        "src/*"
+      ],
+    },
+    "esModuleInterop": true
+    // ...existing code...
+  }
+  // ...existing code...
+}

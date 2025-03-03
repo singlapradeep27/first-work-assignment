@@ -1,0 +1,5 @@
+.nav-link {
+  textDecoration: 'none';
+  color: '#007BFF';
+  fontWeight: 'bold';
+}
