@@ -1,5 +1,4 @@
-
-import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import React, { createContext, useReducer, useContext, ReactNode, JSXElementConstructor } from 'react';
 import { FormField } from '../types/formField';
 
 type State = {
@@ -40,11 +39,14 @@ export function formReducer(state: State, action: Action): State {
 
 export const FormContext = createContext<{ state: State; dispatch: React.Dispatch<Action> } | undefined>(undefined);
 
-export function FormProvider({ children }: { children: ReactNode }) {
-    const [state, dispatch] = useReducer(formReducer, initialState);
-
-    return <FormContext.Provider value={{ state, dispatch }}>{children}</FormContext.Provider>;
+interface FormProviderProps {
+    children: ReactNode;
 }
+
+export const FormProvider = ({ children }: FormProviderProps): React.ReactElement<any, string | JSXElementConstructor<any>> => {
+    const [state, dispatch] = useReducer(formReducer, initialState);
+    return <FormContext.Provider value={{ state, dispatch }}>{children}</FormContext.Provider>;
+};
 
 export const useFormContext = () => {
     const context = useContext(FormContext);

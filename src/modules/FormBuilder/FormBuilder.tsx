@@ -41,10 +41,10 @@ const FormBuilder: React.FC<{}> = () => {
 
 	const deleteFieldPermanantaly = async () => {
 		try {
-			if (!removalableId.includes('UI-')) {
+			if (removalableId && !removalableId?.includes('UI-')) {
 				await deleteField(removalableId);
 			}
-			dispatch({
+			removalableId && dispatch({
 				type: "REMOVE_FIELD", payload: removalableId,
 			});
 		} catch (e) {

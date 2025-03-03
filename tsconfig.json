@@ -1,7 +1,20 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    // ...existing code...
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
     "baseUrl": "",
     "paths": {
       "*": [
@@ -9,10 +22,8 @@
       ],
       "src/*": [
         "src/*"
-      ],
-    },
-    "esModuleInterop": true
-    // ...existing code...
-  }
-  // ...existing code...
+      ]
+    }
+  },
+  "include": ["src"]
 }

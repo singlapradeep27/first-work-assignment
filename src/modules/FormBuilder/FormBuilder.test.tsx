@@ -1,5 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React, { ReactElement, JSXElementConstructor } from 'react';
+import { render, screen, fireEvent, RenderResult } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { FormProvider } from '../../context/FormContext';
 import FormBuilder from './FormBuilder';
 import { useService } from '../../services/formService';
@@ -10,6 +11,14 @@ const mockGetFields = useService().getFields as jest.Mock;
 const mockDeleteField = useService().deleteField as jest.Mock;
 
 describe('FormBuilder', () => {
+    const renderWithProvider = (component: ReactElement<any, string | JSXElementConstructor<any>>): RenderResult => {
+        return render(
+            <FormProvider>
+                {component}
+            </FormProvider>
+        );
+    };
+
 	beforeEach(() => {
 		mockGetFields.mockResolvedValue([
 			{ id: '1', label: 'Field 1', type: 'text' },
@@ -18,22 +27,17 @@ describe('FormBuilder', () => {
 	});
 
 	it('renders form fields', async () => {
-		render(
-			<FormProvider>
-				<FormBuilder />
-			</FormProvider>
-		);
+		renderWithProvider(<FormBuilder />);
 
-		expect(await screen.findByText('Field 1')).toBeInTheDocument();
-		expect(await screen.findByText('Field 2')).toBeInTheDocument();
+		const field1 = await screen.findByText('Field 1');
+		const field2 = await screen.findByText('Field 2');
+		
+		expect(field1).toBeInTheDocument();
+		expect(field2).toBeInTheDocument();
 	});
 
 	it('adds a new field', async () => {
-		render(
-			<FormProvider>
-				<FormBuilder />
-			</FormProvider>
-		);
+		renderWithProvider(<FormBuilder />);
 
 		fireEvent.click(await screen.findByText('Add Question'));
 
@@ -41,11 +45,7 @@ describe('FormBuilder', () => {
 	});
 
 	it('removes a field', async () => {
-		render(
-			<FormProvider>
-				<FormBuilder />
-			</FormProvider>
-		);
+		renderWithProvider(<FormBuilder />);
 
 		fireEvent.click(await screen.findByText('Remove'));
 

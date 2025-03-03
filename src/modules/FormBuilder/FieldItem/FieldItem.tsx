@@ -4,7 +4,7 @@ import {
 	FormControlLabel,
 	Checkbox,
 } from '@mui/material';
-import { FieldType, Option, FormField, SelectField, TextField } from '../../../types/formField';
+import { FieldType, Option, FormField, SelectField } from '../../../types/formField';
 import { schema, baseInputFields, textInputFields, selectInputFields, numberInputFields } from '../Schema/Schema';
 import TextInput from '../../../components/atoms/TextInput/TextInput';
 import OptionEditor from '../../../components/OptionEditor/OptionEditor';
@@ -39,33 +39,48 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 	// Make Schema
 	const fieldSchema = useMemo(() => {
 		return {
-			baseFields: baseInputFields.map((field) => schema.fields[field]),
+			baseFields: baseInputFields.map((field) => ({
+				...schema.fields[field as keyof typeof schema.fields],
+				key: field,
+			})),
 			[FieldType.TEXT]: textInputFields.map((field) => {
 				if (field === 'defaultValue') {
 					return {
 						...schema.fields[field],
 						type: FieldType.TEXT,
+						key: field,
 					}
 				}
-				return schema.fields[field];
+				return {
+					...schema.fields[field as keyof typeof schema.fields],
+					key: field,
+				};
 			}),
 			[FieldType.NUMBER]: numberInputFields.map((field) => {
 				if (field === 'defaultValue') {
 					return {
 						...schema.fields[field],
 						type: FieldType.NUMBER,
+						key: field,
 					}
 				}
-				return schema.fields[field];
+				return {
+					...schema.fields[field as keyof typeof schema.fields],
+					key: field,
+				};
 			}),
-			[FieldType.SELECT]: selectInputFields.map((field) => schema.fields[field])
+			[FieldType.SELECT]: selectInputFields.map((field) => ({
+				...schema.fields[field as keyof typeof schema.fields],
+				key: field,
+			})),
+			[FieldType.CHECKBOX]: []
 		}
 	}, []);
 
 	// First Validate then store
 	const autoSave = useCallback(debounce(async (field: FormField) => {
 		const id = field.id;
-		if (id.includes('UI')) {
+		if (id && id.includes('UI')) {
 			delete field.id;
 		}
 		try {
@@ -73,7 +88,7 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 			const udpateFiled = await upsertField(field);
 			dispatch({
 				type: "UPDATE_FIELD", payload: {
-					id,
+					id: id!,
 					field: udpateFiled
 				}
 			});
@@ -88,16 +103,18 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 
 	const updateField = (field: FormField) => {
 		const id = field.id;
-		dispatch({
-			type: "UPDATE_FIELD", payload: {
-				field,
-				id,
-			}
-		});
+		if (id) {
+			dispatch({
+				type: "UPDATE_FIELD", payload: {
+					field,
+					id,
+				}
+			});
+		}
 	};
 
 	useEffect(() => {
-		const errors = validateForm(fieldSchema['baseFields'].concat(fieldSchema[fieldData.type] || []), fieldData);
+		const errors = validateForm(fieldSchema['baseFields'].concat(fieldSchema[fieldData.type || FieldType.TEXT] || []), fieldData);
 		setErrors(errors);
 		if (Object.keys(errors).length !== 0) return;
 		autoSave(fieldData);
@@ -131,18 +148,19 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 			case FieldType.TEXT:
 			case FieldType.NUMBER:
 			case FieldType.SELECT:
+				const id = field.name || field.id;
 				return (
 					<TextInput
 						type={field.type}
 						label={field.label}
-						error={!!errors?.[field.name || field.id]}
+						error={!!errors?.[id!]}
 						value={get(fieldData, field.name, '')}
 						onChange={handleInputChange}
 						required={field.required}
-						name={field.name || field.id}
-						id={field.name || field.id}
+						name={id}
+						id={id}
 						options={(field as SelectField).options}
-						helperText={errors?.[field.name || field.id]}
+						helperText={errors?.[id!]}
 					/>
 				);
 			case FieldType.CHECKBOX:
@@ -151,8 +169,8 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 						control={
 							<Checkbox
 								name=''
-								checked={get(fieldData, field.name, false)}
-								onChange={(event) => handleCheckboxChange(field.name, event)}
+								checked={get(fieldData, id, false)}
+								onChange={(event) => handleCheckboxChange(id, event)}
 							/>
 						}
 						label={field.label}
@@ -173,7 +191,7 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 			<Typography variant="body1" gutterBottom className='collapse_label'>
 				{fieldData.label}
 			</Typography>
-			{isCollapsed && <IconButton onClick={() => removeField(fieldData.id)} color="error">
+			{isCollapsed && <IconButton onClick={() => removeField(fieldData.id!)} color="error">
 				<DeleteIcon />
 			</IconButton>}
 			<IconButton onClick={toggleCollapse}>
@@ -193,8 +211,8 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 							{
 								(isSaving ?
 									<CircularProgress size={20} color="primary" thickness={5} />
-									: errors[fieldData?.id] ?
-										<Tooltip title={errors[fieldData?.id]}>
+									: errors[fieldData?.id!] ?
+										<Tooltip title={errors[fieldData?.id!]}>
 											<ErrorOutlineIcon style={{ color: "red" }} />
 										</Tooltip>
 										: <CheckCircleIcon color="success" />)
@@ -205,13 +223,13 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 						</div>
 					</div>
 
-					{fieldSchema['baseFields'].concat(fieldSchema[fieldData.type] || []).map((field: FormField, idx) => {
+					{fieldSchema['baseFields'].concat(fieldData.type ? fieldSchema[fieldData.type] : []).map((field: FormField, idx) => {
 						if (idx === 0) return null;
 						else return <div className={`${field.type} cell`} >{renderFieldComponent(field)}</div>
 					}
 					)}
 				</div>
-				{(fieldData.type === FieldType.SELECT ? <OptionEditor options={(fieldData as SelectField).options} onOptionsChange={handleSelectOptionChange} /> : null)}
+				{(fieldData.type === FieldType.SELECT ? <OptionEditor options={(fieldData as SelectField).options || []} onOptionsChange={handleSelectOptionChange} /> : null)}
 			</div >
 	);
 };

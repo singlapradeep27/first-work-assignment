@@ -101,10 +101,10 @@ const schema = {
 	},
 };
 
-const baseInputFields = ['label', 'type', 'required', 'hidden', 'helperText'];
-const textInputFields = ['defaultValue', 'multiline', "validationRule.minLength", "validationRule.maxLength"];
-const selectInputFields = [];
-const numberInputFields = ['defaultValue', 'validationRule.min', 'validationRule.max'];
+const baseInputFields: string[] = ['label', 'type', 'required', 'hidden', 'helperText'];
+const textInputFields: string[] = ['defaultValue', 'multiline', "validationRule.minLength", "validationRule.maxLength"];
+const selectInputFields: string[] = [];
+const numberInputFields: string[] = ['defaultValue', 'validationRule.min', 'validationRule.max'];
 
 export { schema, baseInputFields, textInputFields, selectInputFields, numberInputFields };
 

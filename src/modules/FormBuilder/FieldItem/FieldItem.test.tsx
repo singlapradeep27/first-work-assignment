@@ -10,10 +10,8 @@ const mockField: FormField = {
     id: '1',
     type: FieldType.TEXT,
     label: 'Test Field',
-    key: 'testFieldKey',
-    required: true,
-    name: 'testField',
-    options: [],
+    key: 'test-field',
+    name: 'test-field'
 };
 
 const mockUpdateField = jest.fn();

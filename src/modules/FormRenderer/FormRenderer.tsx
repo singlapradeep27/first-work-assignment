@@ -27,7 +27,7 @@ const FormRenderer = () => {
 
 	useEffect(() => {
 		const initialFormState = state.fields.reduce<Record<string, string | number>>((acc, field) => {
-			acc[field.id] = field.defaultValue || '';
+			acc[field.id!] = field.defaultValue || '';
 			return acc;
 		}, {});
 		setFormValues(initialFormState);
@@ -51,7 +51,7 @@ const FormRenderer = () => {
 		e.preventDefault();
 		if (!validate()) return;
 		const labelValues = state.fields.reduce<string[]>((acc, field) => {
-			acc.push(`${field.label} : ${formValues[field.id]}`)
+			acc.push(`${field.label} : ${formValues[field.id!]}`)
 			return acc;
 		}, []);
 		alert(labelValues);
@@ -60,21 +60,21 @@ const FormRenderer = () => {
 	return (
 		<Box component="form" onSubmit={handleSubmit} className="form-renderer">
 			<h3>Fill the values</h3>
-			{state.fields.map((field, index) =>
-				<Box key={index} mb={2}>
+			{state.fields.map((field, index) => {
+				const id = field.name || field.id;
+				return (<Box key={index} mb={2}>
 					<TextInput
-						error={!!errors?.[field.name || field.id]}
-						type={field.type}
-						label={field.label}
-						helperText={errors?.[field.name || field.id]}
-						value={formValues[field.id]}
+						error={!!errors?.[id!]}
+						helperText={errors?.[id!]}
+						value={formValues[id!]}
 						defaultValue={field.defaultValue}
 						onChange={handleChange}
 						name={field.id}
 						options={(field as SelectField).options}
 						{...field}
 					/>
-				</Box>
+				</Box>)
+			}
 			)
 			}
 			<Button variant="contained" color="primary" type="submit">
