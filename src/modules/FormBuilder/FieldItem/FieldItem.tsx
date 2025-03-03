@@ -144,17 +144,17 @@ export default function FieldItem({ fieldData, removeField }: FieldItemProps) {
 	};
 
 	const renderFieldComponent = (field: FormField) => {
+		const id = (field.name || field.id) as string;
 		switch (field?.type) {
 			case FieldType.TEXT:
 			case FieldType.NUMBER:
 			case FieldType.SELECT:
-				const id = field.name || field.id;
 				return (
 					<TextInput
 						type={field.type}
 						label={field.label}
 						error={!!errors?.[id!]}
-						value={get(fieldData, field.name, '')}
+						value={get(fieldData, id, '')}
 						onChange={handleInputChange}
 						required={field.required}
 						name={id}

@@ -8,22 +8,22 @@ export function validateForm(fields: FormField[], formData: Record<string, any>)
 	fields.forEach((field) => {
 		const id = field.id || field.name;
 		const rule = field['validationRule'];
-		let value = formData[id];
-		if (field.required && (typeof value === 'undefined' || !value?.length)) errors[id] = `${field.label} is required`;
+		let value = formData[id!];
+		if (field.required && (typeof value === 'undefined' || !value?.length)) errors[id!] = `${field.label} is required`;
 		if (field.type === FieldType.TEXT) {
 			if (rule?.['minLength'] && value?.length < rule?.['minLength']) {
-				errors[id] = `Minimum length is ${rule?.['minLength']}`;
+				errors[id!] = `Minimum length is ${rule?.['minLength']}`;
 			}
 			if (rule?.['maxLength'] && value?.length > rule?.['maxLength']) {
-				errors[id] = `Maximum length is ${rule?.['maxLength']}`;
+				errors[id!] = `Maximum length is ${rule?.['maxLength']}`;
 			}
 		} else if (field.type === FieldType.NUMBER) {
 			value = Number(value);
 			if (rule?.['min'] !== undefined && value < rule?.['min']) {
-				errors[id] = `Value must be at least ${rule?.['min']}`;
+				errors[id!] = `Value must be at least ${rule?.['min']}`;
 			}
 			if (rule?.['max'] !== undefined && value > rule?.['max']) {
-				errors[id] = `Value must be at most ${rule?.['max']}`;
+				errors[id!] = `Value must be at most ${rule?.['max']}`;
 			}
 		}
 	});

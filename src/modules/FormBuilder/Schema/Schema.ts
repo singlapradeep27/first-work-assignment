@@ -1,4 +1,4 @@
-import { FieldType } from "../../../types/formField";
+import { FieldType, Option } from "../../../types/formField";
 
 const schema = {
 	formId: "questions-first-work",
@@ -27,8 +27,9 @@ const schema = {
 			"name": "type",
 			"label": "Question Type",
 			"type": FieldType.SELECT,
-			"options": Object.keys(FieldType).reduce((acc, key) => {
-				acc.push({ label: FieldType[key], value: FieldType[key] })
+			"options": Object.keys(FieldType).reduce((acc: Option[], key) => {
+				const fieldKey = key as keyof typeof FieldType;
+				acc.push({ label: FieldType[fieldKey] as string, value: FieldType[fieldKey] })
 				return acc;
 			}, []),
 			"required": true,
