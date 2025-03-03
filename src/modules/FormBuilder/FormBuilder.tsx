@@ -59,7 +59,7 @@ const FormBuilder: React.FC<{}> = () => {
 			<h2 className="form-builder__title">Form Builder</h2>
 
 			{state.fields.map((field, index) => (
-				<FieldItem key={index} fieldData={field} removeField={removeField} />
+				<FieldItem key={field.id} fieldData={field} removeField={removeField} />
 			))}
 
 			<Button onClick={addField} variant="contained">Add Question</Button>
