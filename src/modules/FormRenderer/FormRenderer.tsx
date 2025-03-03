@@ -52,7 +52,7 @@ const FormRenderer: React.FC<{}> = () => {
 
 	return (
 		<Box component="form" onSubmit={handleSubmit} className="form-renderer">
-			<h3>Fill the values</h3>
+			<h3>{state.fields.length ? 'Fill the values' : 'Build the form first'}</h3>
 			{state.fields.map((field, index) => {
 				const id = field.name || field.id;
 				return (
@@ -70,9 +70,9 @@ const FormRenderer: React.FC<{}> = () => {
 					</Box>
 				);
 			})}
-			<Button variant="contained" color="primary" type="submit">
+			{state.fields.length ? <Button variant="contained" color="primary" type="submit">
 				Submit
-			</Button>
+			</Button> : null}
 			<BootStrap />
 		</Box>
 	);
