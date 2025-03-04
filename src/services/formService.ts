@@ -10,9 +10,15 @@ export const useService = () => {
       // Reject if there is no data
       setTimeout(() => {
         try {
-          const data = localStorage.getItem(STORAGE_KEY);
-          const fields = data ? JSON.parse(data) : {};
-          resolve(Object.values(fields) as FormField[]);
+          let fields;
+          let data: any = localStorage.getItem(STORAGE_KEY);
+          data = data ? JSON.parse(data) : { order: [] };
+          if (data?.order) {
+            fields = data.order.map((id: string) => data[id]);
+          } else {
+            fields = Object.values(data);
+          }
+          resolve(fields.filter(Boolean) as FormField[]);
         } catch (error) {
           reject(error);
         }
@@ -34,6 +40,11 @@ export const useService = () => {
           const fieldId = field.id || uuidv4();
           fields[fieldId] = field; // Add or update field
           field.id = fieldId;
+          if (fields?.order?.indexOf(fieldId) === -1) {
+            fields.order = fields.order.concat([fieldId]);
+          } else if (fields?.order?.indexOf(fieldId) === undefined) {
+            fields.order = Object.keys(fields);
+          }
           localStorage.setItem(STORAGE_KEY, JSON.stringify(fields)); //Save changes
           resolve(field);
         } catch (error) {
@@ -64,5 +75,26 @@ export const useService = () => {
     });
   }, []);
 
-  return { getFields, upsertField, deleteField };
+  const updateFieldOrder = useCallback(async (fields: string[]) => {
+    return new Promise<boolean>((resolve, reject) => {
+      // Reject if there is no data
+      if (!fields) {
+        reject("Fields id are not provided");
+        return;
+      }
+      setTimeout(() => {
+        try {
+          let data: any = localStorage.getItem(STORAGE_KEY);
+          data = data ? JSON.parse(data) : { order: [] };
+          data.order = fields;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); // Save changes
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        }
+      }, 1000);
+    });
+  }, []);
+
+  return { getFields, upsertField, deleteField, updateFieldOrder };
 };

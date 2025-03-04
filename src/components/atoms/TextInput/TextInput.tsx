@@ -44,10 +44,10 @@ const TextInput: React.FC<TextInputProps> = ({
     >
       {options
         ? options.map((option: Option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label || option.value}
-          </MenuItem>
-        ))
+            <MenuItem key={option.value} value={option.value}>
+              {option.label || option.value}
+            </MenuItem>
+          ))
         : children}
     </TextField>
   );
