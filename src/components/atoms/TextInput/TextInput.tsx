@@ -36,7 +36,7 @@ const TextInput: React.FC<TextInputProps> = ({
       value={value}
       name={name}
       onChange={onChange}
-      variant="outlined"
+      variant="filled"
       fullWidth
       error={error}
       helperText={helperText}
@@ -44,10 +44,10 @@ const TextInput: React.FC<TextInputProps> = ({
     >
       {options
         ? options.map((option: Option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label || option.value}
-            </MenuItem>
-          ))
+          <MenuItem key={option.value} value={option.value}>
+            {option.label || option.value}
+          </MenuItem>
+        ))
         : children}
     </TextField>
   );

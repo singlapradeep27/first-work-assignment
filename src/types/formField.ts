@@ -9,6 +9,7 @@ export enum FieldType {
 export interface Option {
   label: string;
   value: string;
+  // Futher image support can be added
 }
 
 export type ValidationRule = Record<string, any>;

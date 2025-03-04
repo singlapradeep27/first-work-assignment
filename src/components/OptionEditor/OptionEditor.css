@@ -1,0 +1,14 @@
+.option-container {
+    display: grid;
+    grid-template-columns: 36px auto 40px;
+    position: relative;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.drag-handle {
+    position: absolute !important;
+    transition: opacity 0.3s ease-in-out;
+    cursor: move;
+    left: -14px;
+}
