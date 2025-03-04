@@ -47,7 +47,7 @@ const FormRenderer: React.FC<{}> = () => {
 			acc.push(`${field.label} : ${formValues[field.id!]}`);
 			return acc;
 		}, []);
-		alert(labelValues);
+		alert(JSON.stringify(labelValues));
 	};
 
 	return (
